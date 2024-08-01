@@ -12,7 +12,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // MongoDB connection
-const mongoURI = "mongodb://localhost:27017"; // Replace with your MongoDB URI
+const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017";
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const db = mongoose.connection;
@@ -28,7 +28,7 @@ const contactSchema = new mongoose.Schema({
 
 const Contact = mongoose.model("Contact", contactSchema);
 
-// Routes
+// API routes
 app.post("/api/contact", async (req, res) => {
   const { name, email, message } = req.body;
   try {
@@ -42,6 +42,11 @@ app.post("/api/contact", async (req, res) => {
       .status(500)
       .json({ success: false, message: "Failed to send message." });
   }
+});
+
+// Root route (optional)
+app.get("/", (req, res) => {
+  res.send("Server is up and running");
 });
 
 app.listen(PORT, () => {
